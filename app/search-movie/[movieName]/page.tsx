@@ -1,8 +1,9 @@
 "use client";
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from "react";
-import { apiBase } from "@/utils/apiBase";
+import {useParams} from 'next/navigation';
+import {useEffect, useState} from "react";
+import {apiBase} from "@/utils/apiBase";
+import Link from "next/link";
 
 interface MovieProps {
     adult: boolean;
@@ -21,15 +22,15 @@ interface MovieProps {
     vote_count: number;
 }
 
-export default function DetailMovie() {
-    const { movieName } = useParams();
+export default function SearchMovies() {
+    const {movieName} = useParams();
     const [movies, setMovies] = useState<MovieProps[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
 
     useEffect(() => {
         const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-        const url = `${apiBase}?api_key=${apiKey}&query=${movieName}&page=${currentPage}`;
+        const url = `${apiBase}/search/movie?api_key=${apiKey}&query=${movieName}&page=${currentPage}`;
         fetch(url)
             .then((response) => response.json())
             .then((data) => {
@@ -50,13 +51,15 @@ export default function DetailMovie() {
             <div className="flex flex-wrap gap-4">
                 {movies.map((movie) => (
                     <div key={movie.id} className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
-                        <img
-                            className="w-full h-64 object-cover"
-                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                            alt={movie.title}
-                        />
+                        <Link href={`/detail-movie/${movie.id}`}>
+                            <img
+                                className="w-full h-64 object-cover"
+                                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                                alt={movie.title}
+                            />
+                        </Link>
                         <div className="p-4">
-                            <h2 className="text-xl font-semibold mb-2">{movie.title}</h2>
+                            <h1 className="text-xl font-semibold mb-2">{movie.title}</h1>
                             <p className="text-gray-700">{movie.overview}</p>
                         </div>
                     </div>
